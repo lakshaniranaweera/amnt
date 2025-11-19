@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Amante Quiz</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Arial', sans-serif; color: white; position: relative; }
+    
+    #lockScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background-color: black; cursor: pointer; }
+    #lockScreenVideo { width: 100%; height: 100%; object-fit: cover; }
+    .skip-message { position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%); background-color: rgba(0,0,0,0.5); color: white; padding: 10px 20px; border-radius: 20px; font-size: 1.2rem; border: 2px solid rgba(229, 225, 225, 0.412); pointer-events: none; animation: pulse 2s infinite; }
+
+    #video-background { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: -100; object-fit: cover; }
+    .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.6); z-index: -50; }
+
+    .main-container { width:100%; height:100%; display:flex; justify-content:center; align-items:center; padding:20px; position: relative; z-index: 10; }
+    .content-box { width:100%; max-width:900px; background-color: rgba(0,0,0,0.7); border-radius:20px; padding:30px; box-shadow:0 5px 15px rgba(0,0,0,0.5); text-align:center; position: relative; z-index: 11; }
+
+    .question { margin-bottom:30px; }
+    .question h3 { font-size:1.8rem; color:#4CAF50; margin-bottom:20px; }
+    .question p { font-size:2rem; margin-bottom:30px; }
+
+    .options { display:grid; grid-template-columns:1fr; gap:15px; margin-bottom:30px; }
+    @media (min-width:768px) { .options { grid-template-columns:1fr 1fr; } }
+
+    .option { display:flex; flex-direction:column; align-items:center; padding:20px; background-color: rgba(255,255,255,0.1); border:2px solid #4CAF50; border-radius:15px; cursor:pointer; transition:all 0.3s; }
+    .option:hover { background-color: rgba(255,255,255,0.2); transform: scale(1.02); }
+    .option.selected { background-color: rgba(76,175,80,0.3); border-color:#45a049; animation:pulse 0.5s; }
+    .option-image { width:100%; max-width:200px; height:auto; aspect-ratio:1/1; object-fit:cover; border-radius:10px; border:2px solid #4CAF50; margin-bottom:15px; transition:transform 0.3s; }
+    .option:hover .option-image { transform: scale(1.05); }
+
+    .result-page { position:fixed; top:0; left:0; width:100%; height:100%; z-index:20; display:flex; justify-content:center; align-items:center; text-align:center; background-color: rgba(128, 122, 122, 0.9); padding:20px; flex-direction:column; }
+    .result-page h1 { font-size:5.5rem; margin-bottom:20px; text-transform:uppercase; animation:bounceIn 1s; }
+    .result-page p { font-size:3.3rem; margin:10px 0; animation:fadeInUp 1s; }
+    .score-highlight { font-size:5.2rem; font-weight:bold; text-shadow:0 0 5px currentColor; animation:pulse 1.5s infinite; display:inline-block; color: #d10f0f; }
+
+    .hidden { display:none; }
+
+    @keyframes pulse { 0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);} }
+  </style>
+</head>
+<body>
+
+  <!-- Lock Screen -->
+  <div id="lockScreen">
+    <video id="lockScreenVideo" autoplay muted loop>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+    <div class="skip-message" id="skipMessage">TOUCH ANYWHERE TO START</div>
+  </div>
+
+  <video autoplay muted loop id="video-background">
+    <source src="background.mp4" type="video/mp4">
+  </video>
+  <div class="overlay"></div>
+
+  <div class="main-container">
+    <div class="page-container hidden" id="quizPage">
+      <div class="content-box">
+        <div id="quizContent">
+          <img src="images/logo.png" alt="Amante Logo" style="max-width:250px;margin-bottom:15px;">
+          <h1 style="font-size:2.2rem;margin-bottom:30px;">MATCH & WIN</h1>
+          <div id="questionContainer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result page (full screen) -->
+  <div id="resultPage" class="result-page hidden">
+    <h1 id="resultTitle"></h1>
+    <p id="resultMessage"></p>
+    <p id="resultBonus"></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const lockScreen = document.getElementById('lockScreen');
+      const quizPage = document.getElementById('quizPage');
+      const resultPage = document.getElementById('resultPage');
+      const resultTitle = document.getElementById('resultTitle');
+      const resultMessage = document.getElementById('resultMessage');
+      const resultBonus = document.getElementById('resultBonus');
+
+      lockScreen.addEventListener('click', skipLockScreen);
+      function skipLockScreen() {
+        lockScreen.style.transition = "opacity 0.5s ease-out";
+        lockScreen.style.opacity = '0';
+        setTimeout(() => {
+          lockScreen.classList.add('hidden');
+          quizPage.classList.remove('hidden');
+          startQuiz();
+        }, 500);
+      }
+
+      const questionContainer = document.getElementById('questionContainer');
+      let currentQuestion = 0, userAnswers = [];
+      let questions = [
+        { question: "Which bra features padded moulded cups made of soft cotton, perfect for wearing under T-shirts?", option1:"Carefree Casual & Carefree Confidence", option2:"Smooth Moves and Smooth Charms", option3:"Saree Shaper and Magic support", option4:"Elegant Support Bra", correct_answer:1 },
+        { question: "Which bra gives a flawless invisible look under T-shirts with a seamless design and is made of soft microfiber fabric?", option1:"Carefree Casual & Carefree Confidence", option2:"Smooth Moves and Smooth Charms", option3:"Saree Shaper and Magic support", option4:"Elegant Support Bra", correct_answer:2 },
+        { question: "Which bra is specially designed to wear with Sarees, Shalvas or Kurthis?", option1:"Carefree Casual & Carefree Confidence", option2:"Smooth Moves and Smooth Charms", option3:"Saree Shaper and Magic support", option4:"Elegant Support Bra",correct_answer:3 },
+        { question: "Which bra provides maximum comfort and support for everyday wear?", option1:"Carefree Casual & Carefree Confidence", option2:"Smooth Moves and Smooth Charms", option3:"Saree Shaper and Magic support", option4:"Elegant Support Bra", correct_answer:4 }
+      ];
+
+      function startQuiz() {
+        userAnswers = new Array(questions.length).fill(null);
+        currentQuestion = 0;
+        showQuestion();
+      }
+
+      function showQuestion() {
+        if(currentQuestion >= questions.length){ showResults(); return; }
+        const q = questions[currentQuestion];
+        const optionImages = ["images/1.png","images/2.png","images/3.png","images/4.png"];
+        questionContainer.innerHTML = `
+          <div class="question">
+            <h3>Question ${currentQuestion+1} of ${questions.length}</h3>
+            <p>${q.question}</p>
+            <div class="options">
+              ${[1,2,3,4].map(i=>`
+                <div class="option" data-index="${i}">
+                  <img src="${optionImages[i-1]}" class="option-image" alt="Option ${i}">
+                  <div class="option-text">${q["option"+i]}</div>
+                </div>
+              `).join('')}
+            </div>
+            <button class="btn btn-primary btn-lg next-btn" style="padding:15px 30px;font-size:1.5rem;margin-top:30px;">
+              ${currentQuestion===questions.length-1?"Finish Quiz":"Next Question"}
+            </button>
+          </div>
+        `;
+
+        questionContainer.querySelectorAll('.option').forEach(opt=>{
+          opt.addEventListener('click',function(){
+            questionContainer.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+            this.classList.add('selected');
+            userAnswers[currentQuestion]=parseInt(this.dataset.index);
+          });
+        });
+
+        questionContainer.querySelector('.next-btn').addEventListener('click',()=>{
+          if(userAnswers[currentQuestion]===null){alert('Please select an answer'); return;}
+          currentQuestion++; showQuestion();
+        });
+      }
+
+      function showResults() {
+        const score = questions.reduce((t,q,i)=>t+(userAnswers[i]===q.correct_answer?1:0),0);
+        quizPage.classList.add('hidden');
+        resultPage.classList.remove('hidden');
+
+        if(score===4) {
+          resultTitle.textContent = "CONGRATULATIONS!";
+          resultMessage.textContent = "YOU GOT 4 OUT OF 4 - PERFECT SCORE!";
+          resultBonus.innerHTML = "YOU'VE WON <span class='score-highlight'>20% DISCOUNT</span> VOUCHER";
+        } else if(score===3) {
+          resultTitle.textContent = "WELL DONE!";
+          resultMessage.textContent = "YOU GOT 3 OUT OF 4 - GREAT SCORE!";
+          resultBonus.innerHTML = "YOU'VE WON <span class='score-highlight'>15% DISCOUNT</span> VOUCHER";
+        } else if(score===2) {
+          resultTitle.textContent = "GOOD TRY!";
+          resultMessage.textContent = "YOU GOT 2 OUT OF 4 - GOOD SCORE!";
+          resultBonus.innerHTML = "YOU'VE WON <span class='score-highlight'>10% DISCOUNT</span> VOUCHER";
+        } else {
+          resultTitle.textContent = "BETTER LUCK NEXT TIME!";
+          resultMessage.textContent = "YOU GOT 0 OR 1 OUT OF 4 - NOT ENOUGH TO WIN";
+          resultBonus.textContent = "TRY AGAIN!";
+        }
+
+        setTimeout(() => {
+          resultPage.classList.add('hidden');
+          lockScreen.classList.remove('hidden'); lockScreen.style.opacity='1';
+        },7000);
+      }
+    });
+  </script>
+</body>
+</html>

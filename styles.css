@@ -1,0 +1,400 @@
+/* Base Styles */
+:root {
+    --content-width: 900px;
+    --option-image-size: 300px;
+}
+
+* {
+    box-sizing: border-box;
+     width: 1080px;
+    height: 1920px;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+    color: white;
+    position: relative;
+    margin: 0 auto;
+}
+
+/* Video Background */
+#video-background {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -100;
+    object-fit: cover;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: -99;
+}
+
+/* Centered Layout */
+.main-container {
+    width: 1080px;
+    height: 1920px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.page-container {
+     width: 1080px;
+    height: 1920px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.content-box {
+    width: var(--content-width);
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 30px;
+    padding: 60px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+input[type="text"],
+input[type="tel"] {
+    width: 100%;
+    padding: 25px;
+    font-size: 2rem;
+    border: 3px solid #4CAF50;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Buttons */
+.btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 25px 50px;
+    font-size: 2.5rem;
+    border-radius: 15px;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 100%;
+}
+
+.btn:hover {
+    background-color: #45a049;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Quiz Elements */
+#questionContainer {
+    width: 100%;
+}
+
+.question {
+    margin-bottom: 50px;
+}
+
+.question h3 {
+    font-size: 2.8rem;
+    color: #4CAF50;
+    margin-bottom: 40px;
+}
+
+.question p {
+    font-size: 3rem;
+    margin-bottom: 50px;
+}
+
+.options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 3px solid #4CAF50;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.option:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.option.selected {
+    background-color: rgba(76, 175, 80, 0.3);
+    border-color: #45a049;
+}
+
+.option-image {
+    width: var(--option-image-size);
+    height: var(--option-image-size);
+    object-fit: cover;
+    border-radius: 15px;
+    border: 3px solid #4CAF50;
+    margin-bottom: 20px;
+}
+
+/* Results Section */
+#resultContainer {
+    margin-top: 40px;
+}
+
+#scoreDisplay {
+    font-size: 3rem;
+    color: #4CAF50;
+    font-weight: bold;
+    margin: 50px 0;
+}
+
+.user-name {
+    font-size: 3rem;
+    color: #4CAF50;
+    margin: 20px 0;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none;
+}
+
+.winner-message {
+    color: #4CAF50;
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: rgba(76, 175, 80, 0.1);
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+}/* Perfect Score Page */
+.perfect-score-page {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 10;
+}
+
+.celebration-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.perfect-score-content {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 80%;
+}
+
+.perfect-score-text {
+    font-size: 2.5rem;
+    color: #FFD700;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+/* Regular Score Page */
+.regular-score-page {
+    width: 100%;
+    text-align: center;
+}
+
+.discount-text {
+    font-size: 2rem;
+    color: #4CAF50;
+    margin: 20px 0;
+}
+
+/* Common styles for both pages */
+.user-name {
+    font-size: 3rem;
+    color: #4CAF50;
+    margin: 20px 0;
+    font-weight: bold;
+}
+/* Star container and animation */
+.star-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.star {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('star.png') no-repeat center center;
+    background-size: contain;
+    animation: pulse 2s infinite alternate, rotate 20s linear infinite;
+}
+
+.perfect-score-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #fff;
+    padding: 20px;
+    width: 80%;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Video styling */
+.celebration-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.star {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-right: 100px solid transparent;
+    border-bottom: 70px solid gold;
+    border-left: 100px solid transparent;
+    transform: rotate(35deg);
+    animation: pulse 2s infinite alternate;
+}
+
+.star:before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-right: 100px solid transparent;
+    border-bottom: 70px solid gold;
+    border-left: 100px solid transparent;
+    transform: rotate(-70deg);
+    top: -45px;
+    left: -65px;
+}
+
+.star:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-right: 100px solid transparent;
+    border-bottom: 70px solid gold;
+    border-left: 100px solid transparent;
+    transform: rotate(70deg);
+    top: 3px;
+    left: -105px;
+}
+/* Blinking effect for percentages */
+.blink-percent {
+    animation: blink 1s infinite;
+    display: inline-block;
+    font-weight: bold;
+    position: relative; /* Required for sparkle effects */
+}
+
+/* Optional: Gold shimmer effect */
+.blink-percent {
+    color: gold;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.7);
+}
+
+/* Blink Animation */
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+/* Optional: Sparkle dots around % */
+.blink-percent::before,
+.blink-percent::after {
+    content: "•";
+    position: absolute;
+    color: gold;
+    font-size: 0.6em;
+    opacity: 0;
+    animation: sparkle 2s infinite;
+}
+
+.blink-percent::before {
+    left: -10px;
+    top: -5px;
+    animation-delay: 0.3s;
+}
+
+.blink-percent::after {
+    right: -10px;
+    bottom: -5px;
+    animation-delay: 0.6s;
+}
+
+@keyframes sparkle {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0; transform: scale(0.5); }
+}
