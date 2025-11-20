@@ -330,11 +330,11 @@ document.addEventListener('DOMContentLoaded', function() {
     } else if (score === 2) {
       resultTitle.textContent = "GOOD TRY!";
       resultMessage.textContent = "YOU GOT 2 OUT OF 4";
-      resultBonus.innerHTML = "YOU WIN <span class='score-highlight'>10% DISCOUNT</span>";
+      resultBonus.innerHTML = "YOU WIN <span class='score-highlight'>15% DISCOUNT</span>";
     } else {
       resultTitle.textContent = "PLEASE TRY AGAIN";
       resultMessage.textContent = "YOUR SCORE IS LOW";
-      resultBonus.textContent = "NO DISCOUNT AWARDED";
+      resultBonus.innerHTML = "YOU WIN <span class='score-highlight'>15% DISCOUNT</span>";
     }
 
     setTimeout(() => {
